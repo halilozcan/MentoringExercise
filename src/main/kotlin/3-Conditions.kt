@@ -54,7 +54,7 @@ fun main() {
         else -> println("other than 1 or 2")
     }
 
-    // when in parametre olmadan kullanışı
+    // when in parametre olmadan kullanılışı
     max = when {
         a > b -> a
         b > a -> b

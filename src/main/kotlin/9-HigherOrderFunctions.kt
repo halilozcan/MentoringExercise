@@ -65,7 +65,7 @@ fun printSentence(sentence: String, print: (String) -> Unit) {
     print(sentence)
 }
 
-// Lambda expressionlar değer döndürebilir.
+// Lambda expressionlar değer olarak döndürebilir.
 fun returnLambda(): () -> String {
     val lambda = { "Hi" }
     return lambda

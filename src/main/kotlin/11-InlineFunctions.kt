@@ -59,7 +59,7 @@ inline fun higherOrderFunction(lambda: () -> Unit) {
 /**
  * Bazen bazı lambda expressionları inlined olmasını istemeyebilirsiniz. Eğer bunun
  * inlined olmasını istemiyorsanız noinline ile işaretleyebilirsiniz. noinline
- * fonksiyonlar locak return lere izin vermez
+ * fonksiyonlar local return lere izin vermez
  */
 inline fun higherOrderFunctionNoInlined(lambda: () -> Unit, noinline noInlinedLambda: () -> Unit) {
     doSomething()
@@ -92,13 +92,15 @@ inline fun higherOrderFunctionCrossInline(crossinline lambda: () -> Unit) {
  * Compiler Error alırsınız.
  */
 
-fun action(lambda: () -> Unit) {
+fun callAction() {
+    edit(false, lambda = {
 
+    })
 }
 
 inline fun edit(isOk: Boolean, lambda: () -> Unit) {
     /**
-     * Böyle bir kullanım yapamazsınız. Inline fonksiyonlar, fonksiyonlara
+     * Böyle bir kullanım yapamazsınız. Inline fonksiyonlara, fonksiyonlara
      * ait referansı geçiremezsiniz.
      * Bunu kullanmak için lambda yı noInline yapabilirsiniz ya da fonksiyonu inline
      * olmaktan çıkarabilirsiniz.
@@ -107,12 +109,9 @@ inline fun edit(isOk: Boolean, lambda: () -> Unit) {
     // action(lambda)
 }
 
-fun callAction() {
-    edit(false, lambda = {
+fun action(lambda: () -> Unit) {
 
-    })
 }
-
 
 fun doSomething() {
     println("do something()")
