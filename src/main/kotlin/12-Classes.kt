@@ -54,7 +54,7 @@ person.lectures.add(this)
 
 class Lecture
 
-class Person(val name: String) {
+class PersonConstructorInit(val name: String) {
     private val lectures: MutableList<Lecture> = mutableListOf()
 
     constructor(name: String, lecture: Lecture) : this(name) {
