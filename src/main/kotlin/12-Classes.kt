@@ -78,5 +78,5 @@ class WontBeCreated private constructor()
 
 
 fun main() {
-    //val person = Person("halil", "özcan")
+    val person = PersonInitializer("halil", "özcan")
 }
