@@ -121,10 +121,42 @@ class Rectangle : Shape() {
     }
 }
 
+abstract class Fragment {
+    abstract fun onCreateView(): View
+    abstract fun onViewCreated()
+    abstract fun onCreate()
+}
+
+abstract class BaseFragment : Fragment() {
+
+    abstract fun initArguments()
+    abstract fun layoutResId(): Int
+    abstract fun observeUi()
+
+    override fun onCreate() {
+        initArguments()
+    }
+
+    override fun onCreateView(): View {
+        return View(layoutResId())
+    }
+
+    override fun onViewCreated() {
+        observeUi()
+    }
+}
+
+class View(layoutResId: Int)
+
+class HomeFragment : BaseFragment() {
+    override fun initArguments() {}
+    override fun layoutResId() = 15
+    override fun observeUi() {}
+}
 
 fun main() {
     val softwareEngineer = SoftwareEngineer("Halil", 6, 1994)
-    // softwareEngineer.printDetails()
+    softwareEngineer.printDetails()
 
     val animationContract = object : AnimationContract() {
         override fun onStart() {
