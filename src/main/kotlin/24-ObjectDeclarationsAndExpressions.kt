@@ -39,6 +39,11 @@ object Database {
     @Volatile
     private var connection: Connection? = null
 
+    /**
+     * Bu fonksiyonlara java da erişmek için Database.INSTANCE.getConnection() ifadesi
+     * yazılır ama INSTANCE olmadan Java da kullanma amacıyla static hale getirmek için
+     * @JvmStatic annotation ı kullanılır.
+     */
     @JvmStatic
     fun getConnection(): Connection {
         if (connection == null) {
@@ -74,6 +79,74 @@ interface BluetoothListener {
     fun onLowEnergy()
     fun onDisconnected()
 }
+
+class BluetoothService {
+
+    private var bluetoothListener: BluetoothListener? = null
+
+    fun setBluetoothListener(bluetoothListener: BluetoothListener?) {
+        this.bluetoothListener = bluetoothListener
+    }
+
+    fun connect() {
+        bluetoothListener?.onConnected()
+    }
+
+    fun disconnect() {
+        bluetoothListener?.onDisconnected()
+    }
+
+    fun informLowEnergy() {
+        bluetoothListener?.onLowEnergy()
+    }
+}
+
+/**
+ * Kotlinde object leri yazdırmak istediğiniz zaman MyObject@21312 gibi bir çıktı
+ * üretirler. Bu sonuç nesnenin adı ve hashcode unu barındırır. Eğer özel bir şekilde
+ * yazılması isteniyorsa toString() methodu override edilmelidir. Ancak buna
+ * gerek kalmadan data ile işaretlenerek direkt olarak MyObject şeklinde çıktı
+ * üretilmesi sağlanabilir.
+ * Data objectlere özel olarak equals ve hashcode implenmentationları yazılamaz.
+ */
+
+data object Error
+
+/**
+ * Sınıflar içerisinde object tanımlanabilir. Ama object in içerisindeki fonksiyona
+ * erişmek için object in adı kullanılmalıdır. Direktmen sınıf üzerinden erişim
+ * sağlanabilmesi için companion object tanımlaması yapılır
+ */
+
+class MyFragment {
+
+    object InstanceCreator {
+        fun newInstance() = MyFragment()
+    }
+
+    companion object CompanionInstanceCreator {
+        @JvmStatic
+        fun newInstance() = MyFragment()
+    }
+
+    /*companion object : Creator {
+        override fun createInstance(): MyFragment {
+            return MyFragment()
+        }
+    }*/
+}
+
+interface Creator {
+    fun createInstance(): MyFragment
+}
+
+/**
+ * Object expressionlar kullanıldığı yerde hemen tanımlanırlar ve çalışırlar
+ * Object declarations lar lazy bir şekilde kendilerine erişim yapıldığı zaman initialize
+ * edilirler.
+ * Companion Object tanımlandığı sınıf yüklendiğinde kullanılmaya başlandığında
+ * initialize edilirler.
+ */
 
 fun main() {
     println(sum)
@@ -119,25 +192,12 @@ fun main() {
     bluetoothService.connect()
     bluetoothService.informLowEnergy()
     bluetoothService.disconnect()
-}
 
-class BluetoothService {
+    println(Error)
 
-    private var bluetoothListener: BluetoothListener? = null
-
-    fun setBluetoothListener(bluetoothListener: BluetoothListener?) {
-        this.bluetoothListener = bluetoothListener
-    }
-
-    fun connect() {
-        bluetoothListener?.onConnected()
-    }
-
-    fun disconnect() {
-        bluetoothListener?.onDisconnected()
-    }
-
-    fun informLowEnergy() {
-        bluetoothListener?.onLowEnergy()
-    }
+    MyFragment.InstanceCreator.newInstance()
+    // Companion Object tanımlanması
+    MyFragment.newInstance()
+    // Companion object e isim verilse bile erişirken kullanılmasına gerek yoktur
+    MyFragment.CompanionInstanceCreator.newInstance()
 }
