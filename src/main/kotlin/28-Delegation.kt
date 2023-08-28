@@ -58,7 +58,11 @@ class Halil : Nameable {
     override var name: String = "Halil"
 }
 
-class LongDistanceRunner : Runnable {
+interface Runner {
+    fun run()
+}
+
+class LongDistanceRunner : Runner {
     override fun run() {
         println("run()")
     }
@@ -69,14 +73,14 @@ class LongDistanceRunner : Runnable {
  * erişilebilir. Runnable ın içerisindeki fonksiyonu yazmadan direkt olarak
  * erişilebilir.
  */
-class PersonDelegation(name: Nameable, runner: Runnable) : Nameable by name, Runnable by runner
+class PersonDelegation(name: Nameable, runner: Runner) : Nameable by name, Runner by runner
 
 interface Printer {
-    fun print()
+    fun printText()
 }
 
 class DesktopPrinter(private val text: String) : Printer {
-    override fun print() {
+    override fun printText() {
         println(text)
     }
 }
@@ -97,8 +101,9 @@ fun main() {
 
     val person = PersonDelegation(Halil(), LongDistanceRunner())
     println(person.name)
-    println(person.run())
+    person.run()
 
     val desktopPrinter = DesktopPrinter("Hello")
-    User(desktopPrinter).print()
+    val user = User(desktopPrinter)
+    user.printText()
 }
