@@ -87,14 +87,12 @@ class ContravarianceGenericClass<in T : A> {
 /**
  * Burada sloth isminden de anlaşılacağı üzere hem bir classtır hem de bir tipin ismidir.
  */
-data class Kitty(val kittyName: String, val isTwoFingered: Boolean) : Mammal(kittyName) {
-    /*fun eat() {}
+data class Kitty(val kittyName: String, val isTwoFingered: Boolean) : Mammal(kittyName) {/*fun eat() {}
 
     fun sleep() {}*/
 }
 
-data class Lion(val lionName: String) : Mammal(lionName) {
-    /*fun eat() {}
+data class Lion(val lionName: String) : Mammal(lionName) {/*fun eat() {}
 
     fun sleep() {}*/
 }
@@ -140,6 +138,55 @@ fun feed(elements: List<Panda>) {
         it.eat()
     }
 }*/
+
+interface Device
+
+class Computer : Device
+class Telephone : Device
+
+fun addComputer(list: MutableList<Any>) {
+    list.add(Computer())
+}
+
+/**
+ * Out ve in positionlarda constructorlar bu parametre olarak alma kuralına tabi
+ * tutulmazlar.
+ * Java nın aksine Kotlin tarafında declaration-site variance şeklinde sınıflar
+ * yazılırken type parametreleri tanımlanabilir. Java da WildCards'a (*) ihtiyaç
+ * bulunmaktadır. Böylece fazlasıyla boilerplate code yazılmamış olur.
+ */
+class ReadOnlyBox<out T>(private var item: T) {
+    fun getItem(): T = item
+}
+
+class WriteOnlyBox<in T>(private var item: T) {
+    fun setItem(newItem: T) {
+        item = newItem
+    }
+}
+
+interface SomeInterface<in P, out R> {
+    fun someFunction(p: P): R
+}
+
+/**
+ * A subtype must accept at least the same range of types as its supertype declares.
+ * A subtype must return at most the same range of types as its supertype declares.
+ */
+
+interface GenericInterface<out T> {
+    fun insert(): T
+}
+
+/**
+ * Use-Site Variance
+ */
+
+fun <T> copyData(source: MutableList<T>, destination: MutableList<in T>) {
+    for (element in source) {
+        destination.add(element)
+    }
+}
 
 fun main() {
     /**
@@ -187,9 +234,7 @@ fun main() {
      * List type ı otomatik olarak Sloth olur
      */
     val sloths = listOf(
-        Kitty("A", false),
-        Kitty("B", false),
-        Kitty("C", false)
+        Kitty("A", false), Kitty("B", false), Kitty("C", false)
     )
 
     val pandas = listOf(Lion("D"), Lion("E"))
@@ -199,11 +244,7 @@ fun main() {
     feed(pandas)
 
     val allElements = listOf(
-        Kitty("Jerry", false),
-        Kitty("Bae", true),
-        Kitty("Alex", false),
-        Lion("Tegan"),
-        Lion("Peggy")
+        Kitty("Jerry", false), Kitty("Bae", true), Kitty("Alex", false), Lion("Tegan"), Lion("Peggy")
     )
 
     // Contravariance
@@ -212,15 +253,54 @@ fun main() {
     }
 
     println(allElements.sortedWith(compareNames))
-}
 
-/**
- * A subtype must accept at least the same range of types as its supertype declares.
- * A subtype must return at most the same range of types as its supertype declares.
- */
+    val telephones = mutableListOf(
+        Telephone(), Telephone(), Telephone()
+    )
 
-interface GenericInterface<out T> {
-    fun insert(): T
+    /**
+     * Bu eklemenin yapılamamasının sebebi MutableList in invariant olmasıdır.
+     * Invariance sadece aynı tipi kabul eder. Burada MutableList invariant
+     * olmasaydı bir Exception fırlatılması söz konusu olurdur.
+     */
+
+    /**
+     * Class = Telephone
+     * Types = Telephone, Telephone?
+     * Subtypes = Telephone inherit eden herhangi bir şey ya da Telephone un kendisi
+     */
+
+    /**
+     * A -> A?
+     * Telephone -> Telephone?
+     * Telephone? -> Telephone // burası error verir.
+     *
+     * Nullable değer kabul eden bir değişken içerisinde null olmayan bir değer
+     * tutulabilir ama tam tersi olamaz.
+     */
+    // addComputer(telephones)
+
+    println(telephones)
+
+    val computers = mutableListOf(
+        Computer(),
+        Computer(),
+        Computer()
+    )
+
+    val devices = mutableListOf(
+        Telephone(),
+        Telephone(),
+        Computer()
+    )
+
+    copyData(computers, devices) // List<Device> is subtype of List<Computer>
+    copyData(telephones, devices) // List<Device> is subtype of List<Telephone>
+
+    /**
+     * Compile hatası verir. Çünkü Computer ve Telephone arasında bir typing yoktur
+     */
+    // copyData(computers, telephones)
 }
 
 
