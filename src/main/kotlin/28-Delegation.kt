@@ -71,6 +71,18 @@ class LongDistanceRunner : Runnable {
  */
 class PersonDelegation(name: Nameable, runner: Runnable) : Nameable by name, Runnable by runner
 
+interface Printer {
+    fun print()
+}
+
+class DesktopPrinter(private val text: String) : Printer {
+    override fun print() {
+        println(text)
+    }
+}
+
+class User(printer: Printer) : Printer by printer
+
 fun main() {
     /**
      * Screen in show işleminin View nesnesine atanması işlemi delegationdır.
@@ -86,4 +98,7 @@ fun main() {
     val person = PersonDelegation(Halil(), LongDistanceRunner())
     println(person.name)
     println(person.run())
+
+    val desktopPrinter = DesktopPrinter("Hello")
+    User(desktopPrinter).print()
 }
