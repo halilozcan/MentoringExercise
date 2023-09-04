@@ -122,6 +122,40 @@ fun userDelegation(userDelegate: UserDelegate = UserDelegate()): ReadWriteProper
 val userDelegate: UserDelegate by userDelegation()
 var userDelegation: UserDelegate by userDelegation()
 
+/**
+ * Kotlin de bir değişkene tanımlama anında değer ataması yapılmak
+ * istenmezse ve daha sonradan değer ataması yapılmak istenirse
+ * lateinit anahtar kelimesi kullanılır. lateinit anahtar kelimesi
+ * primitive tiplerde kullanılamaz. Initialize edilmesinin kontrolü
+ * reflection ile beraber sınıf referansı alınarak yapılır.
+ */
+
+class LateInitProperty {
+    private lateinit var info: String
+
+    fun setInfo(info: String) {
+        this.info = info
+    }
+
+    fun getInfo(): String? {
+        return if (this::info.isInitialized) {
+            info
+        } else {
+            null
+        }
+    }
+}
+
+/**
+ * Primitive bir tipin tanımlaması yapılırken ilk değer atanması
+ * yapılmak istenmediği zaman lateinit kullanılamaz. Bundan dolayı
+ * bu tip genellikle nullable hale getirilir. Daha sonra her yerde
+ * null safety ile kontrol yapılmaya çalışılır. Bunu yapmak yerine
+ * notNull() delegation ı kullanılabilir
+ */
+
+var notNull: Int by Delegates.notNull()
+
 fun main() {
     val example = DelegationSample()
     println(example.delegated)
@@ -152,4 +186,9 @@ fun main() {
 
     delegateAnotherProperty.permission = "Camera"
     println(delegateAnotherProperty.privacyPermission)
+
+    // notNull initialize edilmediği için hata fırlatılır
+    // println(notNull)
+    notNull = 14
+    println(notNull)
 }
