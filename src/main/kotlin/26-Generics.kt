@@ -10,6 +10,7 @@
  * her kelime veya harf kullanılabilir.
  * Buradaki variance invariant tır yani tam olarak verilen tip gereklidir.
  */
+
 fun <T> log(x: T) {
     println(x)
 }
@@ -33,6 +34,37 @@ class StringLogger : Logger<String> {
  * karar verir.
  */
 
+interface AnimalGeneric
+
+interface DogAnimal : AnimalGeneric
+
+interface AnimalGenericImplementation : AnimalGeneric
+
+interface CatAnimal : AnimalGeneric
+
+class Cavalier : DogAnimal
+
+class British : CatAnimal
+
+interface SuperType {
+    fun match(subject: CatAnimal): DogAnimal
+}
+
+interface SubType : SuperType {
+    /**
+     * A subtype must accept at least the same range of types as its supertype declares.
+     * A subtype must return at most the same range of types as its supertype declares.
+     */
+    override fun match(subject: CatAnimal): DogAnimal
+}
+
+class SubTypeImplementation : SubType {
+    override fun match(subject: CatAnimal): Cavalier {
+        return Cavalier()
+    }
+}
+
+fun createSubType() = SubTypeImplementation()
 
 open class A {
     //some methods & member variable
@@ -167,10 +199,6 @@ interface SomeInterface<in P, out R> {
     fun someFunction(p: P): R
 }
 
-/**
- * A subtype must accept at least the same range of types as its supertype declares.
- * A subtype must return at most the same range of types as its supertype declares.
- */
 
 interface GenericInterface<out T> {
     fun insert(): T
@@ -299,15 +327,10 @@ fun main() {
      * Compile hatası verir. Çünkü Computer ve Telephone arasında bir typing yoktur
      */
     // copyData(computers, telephones)
+
+    val subType = createSubType()
+    val superType = subType as SuperType
+
+    val dog = superType.match(British())
+    val cavalier = subType.match(British())
 }
-
-
-
-
-
-
-
-
-
-
-
