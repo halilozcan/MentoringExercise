@@ -1,5 +1,3 @@
-import sun.net.www.content.text.Generic
-
 /**
  * Sadece tek bir tipe bağımlı kalmamak için bir yapının birden fazla veri tipiyle
  * çalışmasını sağlamak için genericler kullanır
@@ -85,7 +83,7 @@ class ContravarianceGenericClass<in T : A> {
  */
 
 /**
- * Burada sloth isminden de anlaşılacağı üzere hem bir classtır hem de bir tipin ismidir.
+ * Burada kitty isminden de anlaşılacağı üzere hem bir classtır hem de bir tipin ismidir.
  */
 data class Kitty(val kittyName: String, val isTwoFingered: Boolean) : Mammal(kittyName) {/*fun eat() {}
 
@@ -127,13 +125,13 @@ fun feed(elements: List<Mammal>) {
  * Kitty bir Mammaldır denilemez. Contravariance in ile işaretlenerek yapılır.
  */
 
-/*fun feed(elements: List<Sloth>) {
+/*fun feed(elements: List<Kitty>) {
     elements.forEach {
         it.eat()
     }
 }
 
-fun feed(elements: List<Panda>) {
+fun feed(elements: List<Lion>) {
     elements.forEach {
         it.eat()
     }
@@ -231,17 +229,17 @@ fun main() {
      */
 
     /**
-     * List type ı otomatik olarak Sloth olur
+     * List type ı otomatik olarak Kitty olur
      */
-    val sloths = listOf(
+    val kitties = listOf(
         Kitty("A", false), Kitty("B", false), Kitty("C", false)
     )
 
-    val pandas = listOf(Lion("D"), Lion("E"))
+    val lions = listOf(Lion("D"), Lion("E"))
 
     // Covariance
-    feed(sloths)
-    feed(pandas)
+    feed(kitties)
+    feed(lions)
 
     val allElements = listOf(
         Kitty("Jerry", false), Kitty("Bae", true), Kitty("Alex", false), Lion("Tegan"), Lion("Peggy")
@@ -249,7 +247,7 @@ fun main() {
 
     // Contravariance
     val compareNames = Comparator { o1: Mammal, o2: Mammal ->
-        o1.name.first().toInt() - o2.name.first().toInt()
+        o1.name.first().code - o2.name.first().code
     }
 
     println(allElements.sortedWith(compareNames))
