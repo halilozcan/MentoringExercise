@@ -1,5 +1,3 @@
-import javax.jws.soap.SOAPBinding.Use
-
 /**
  * Bazı durumlarda primitive typeları wrap edip bir sınıfın içerisine gömmek gerekir.
  * Bu durumlarda runtime performance fazlasıyla azalır. Bunun nedeni primitive
