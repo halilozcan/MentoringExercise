@@ -1,5 +1,4 @@
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
@@ -9,8 +8,8 @@ import kotlinx.coroutines.runBlocking
  * ait bir veri tutabilmesidir.
  */
 
-sealed class Response<out T : Any> {
-    data class Success<T : Any>(val data: T) : Response<T>()
+sealed class Response<T> {
+    data class Success<T>(val data: T) : Response<T>()
     data object Loading : Response<Nothing>()
 
     sealed class Error : Response<Nothing>() {
@@ -46,11 +45,22 @@ suspend fun makeNetworkResponse(isError: Boolean = false) = flow {
     delay(2000)
     try {
         if (isError) {
-            throw Exception("Something went wrong")
+            throw NetworkException("Something went wrong")
         } else {
             emit(Response.Success(ResultDto("hello")))
         }
     } catch (e: Exception) {
-        emit(Response.Error.NetworkError)
+        when (e) {
+            is NetworkException -> {
+                emit(Response.Error.NetworkError)
+            }
+
+            is WritingException -> {
+                emit(Response.Error.WritingError)
+            }
+        }
     }
 }
+
+class NetworkException(override val message: String) : Exception(message)
+class WritingException(override val message: String) : Exception(message)
