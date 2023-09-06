@@ -199,7 +199,9 @@ interface SomeInterface<in P, out R> {
     fun someFunction(p: P): R
 }
 
-
+/**
+ * Declaration Variance
+ */
 interface GenericInterface<out T> {
     fun insert(): T
 }
@@ -270,7 +272,11 @@ fun main() {
     feed(lions)
 
     val allElements = listOf(
-        Kitty("Jerry", false), Kitty("Bae", true), Kitty("Alex", false), Lion("Tegan"), Lion("Peggy")
+        Kitty("Jerry", false),
+        Kitty("Bae", true),
+        Kitty("Alex", false),
+        Lion("Tegan"),
+        Lion("Peggy")
     )
 
     // Contravariance
@@ -279,10 +285,6 @@ fun main() {
     }
 
     println(allElements.sortedWith(compareNames))
-
-    val telephones = mutableListOf(
-        Telephone(), Telephone(), Telephone()
-    )
 
     /**
      * Bu eklemenin yapılamamasının sebebi MutableList in invariant olmasıdır.
@@ -304,6 +306,9 @@ fun main() {
      * Nullable değer kabul eden bir değişken içerisinde null olmayan bir değer
      * tutulabilir ama tam tersi olamaz.
      */
+    val telephones = mutableListOf(
+        Telephone(), Telephone(), Telephone()
+    )
     // addComputer(telephones)
 
     println(telephones)
