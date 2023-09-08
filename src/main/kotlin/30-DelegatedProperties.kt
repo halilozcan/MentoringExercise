@@ -169,29 +169,38 @@ interface LifecycleObserver {
     fun onDestroy(owner: LifecycleOwner) {}
 }
 
-class SampleFragment : LifecycleOwner {
-    val lifecycleOwner: LifecycleOwner = this
+open class BaseSampleFragment : LifecycleOwner {
+    private var lifecycleOwner: LifecycleOwner? = null
+    fun onViewCreated() {
+        lifecycleOwner = this
+    }
 
-    val binding: HomeScreenBinding by viewBinding { HomeScreenBinding.inflate() }
+    fun getLifecycleOwner(): LifecycleOwner = lifecycleOwner!!
+
+    fun requireView(): BaseView = BaseView()
+}
+
+class SampleFragment : BaseSampleFragment() {
+    val binding: HomeScreenBinding by viewBinding(HomeScreenBinding::bind)
 }
 
 class HomeScreenBinding : ViewBinding {
 
     companion object {
-        fun inflate(): HomeScreenBinding {
+        fun bind(view: BaseView): HomeScreenBinding {
             return HomeScreenBinding()
         }
     }
 }
 
-fun <T : ViewBinding> SampleFragment.viewBinding(factory: () -> T): ReadOnlyProperty<SampleFragment, T> =
+fun <T : ViewBinding> SampleFragment.viewBinding(factory: (BaseView) -> T): ReadOnlyProperty<SampleFragment, T> =
     object : ReadOnlyProperty<SampleFragment, T>, LifecycleObserver {
 
         private var binding: T? = null
 
         override operator fun getValue(thisRef: SampleFragment, property: KProperty<*>): T {
-            binding ?: factory().also {
-                if (lifecycleOwner.isStarted()) {
+            binding ?: factory(requireView()).also {
+                if (getLifecycleOwner().isStarted()) {
                     binding = it
                 }
             }
