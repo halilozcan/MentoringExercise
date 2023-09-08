@@ -11,6 +11,13 @@ import kotlin.reflect.jvm.isAccessible
 class ReflectionClass
 
 /**
+ * Eğer bir sınıfın üyesi veya extension fonksiyonu kullanılmak
+ * istenirse; String::toCharArray
+ */
+
+val isEmptyStringList: List<String>.() -> Boolean = List<String>::isEmpty
+
+/**
  * Fonksiyonlara da reflection ile ulaşılabilir. Fonksiyonlar, propertyler
  * ve constructorlar callable referance olarak geçerler ve ortak süper
  * tipleri KCallable<out R> olarak geçer.
@@ -22,20 +29,13 @@ class ReflectionClass
 
 fun isOdd(x: Int) = x % 2 == 0
 
-/**
- * Eğer bir sınıfın üyesi veya extension fonksiyonu kullanılmak
- * istenirse; String::toCharArray
- */
-
-val isEmptyStringList: List<String>.() -> Boolean = List<String>::isEmpty
+fun length(s: String) = s.length
 
 fun <A, B, C> unionConditions(f: (B) -> C, g: (A) -> B): (A) -> C {
     return {
         f(g(it))
     }
 }
-
-fun length(s: String) = s.length
 
 var counter = 1
 
@@ -82,6 +82,8 @@ fun main() {
     val oddLength = unionConditions(::isOdd, ::length)
     val names = listOf("Halil", "Metehan", "Serdar", "İbrahim")
     println(names.filter(oddLength))
+
+    println(names.isEmptyStringList())
 
     println(::counter.get())
     println(::counter.name)
