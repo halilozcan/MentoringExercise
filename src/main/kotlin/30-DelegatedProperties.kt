@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
  * Delegation by anahtar kelimesi ile yapılır. Property den değer
  * alınması ve değer atanması getValue() ve setValue() fonksiyonlarına
  * verilir. Property delegation işleminde interface implemente etmeye
- * gerek yoktur ancak getValue() ve setValue() fonksiyonları tanımlanmak
+ * gerek yoktur ancak getValue() veya setValue() fonksiyonları tanımlanmak
  * zorundadır.
  */
 class DelegationSample {
@@ -105,7 +105,7 @@ class UserMapDelegate(val map: Map<String, Any?>) {
  * extension ve operator fonksiyon olarak tanımlanabilir
  */
 
-class UserDelegate()
+class UserDelegate
 
 fun userDelegation(userDelegate: UserDelegate = UserDelegate()): ReadWriteProperty<Any?, UserDelegate> =
     object : ReadWriteProperty<Any?, UserDelegate> {
