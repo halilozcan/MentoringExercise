@@ -1,4 +1,5 @@
 import kotlin.properties.Delegates
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -156,6 +157,52 @@ class LateInitProperty {
 
 var notNull: Int by Delegates.notNull()
 
+class BaseView
+
+interface ViewBinding
+
+interface LifecycleOwner {
+    fun isStarted(): Boolean = true
+}
+
+interface LifecycleObserver {
+    fun onDestroy(owner: LifecycleOwner) {}
+}
+
+class SampleFragment : LifecycleOwner {
+    val lifecycleOwner: LifecycleOwner = this
+
+    val binding: HomeScreenBinding by viewBinding { HomeScreenBinding.inflate() }
+}
+
+class HomeScreenBinding : ViewBinding {
+
+    companion object {
+        fun inflate(): HomeScreenBinding {
+            return HomeScreenBinding()
+        }
+    }
+}
+
+fun <T : ViewBinding> SampleFragment.viewBinding(factory: () -> T): ReadOnlyProperty<SampleFragment, T> =
+    object : ReadOnlyProperty<SampleFragment, T>, LifecycleObserver {
+
+        private var binding: T? = null
+
+        override operator fun getValue(thisRef: SampleFragment, property: KProperty<*>): T {
+            binding ?: factory().also {
+                if (lifecycleOwner.isStarted()) {
+                    binding = it
+                }
+            }
+            return binding!!
+        }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            binding = null
+        }
+    }
+
 fun main() {
     val example = DelegationSample()
     println(example.delegated)
@@ -174,8 +221,7 @@ fun main() {
 
     val userMapDelegate = UserMapDelegate(
         mapOf(
-            "name" to "Halil",
-            "age" to 25
+            "name" to "Halil", "age" to 25
         )
     )
 
