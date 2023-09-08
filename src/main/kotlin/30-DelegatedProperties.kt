@@ -82,6 +82,11 @@ class PersonDelegate {
  * Sadece val değil var propertylerde de kullanılabilir.
  */
 
+class UserMapDelegate(val map: Map<String, Any?>) {
+    val name: String by map
+    val age: Int by map
+}
+
 /**
  * Bir property başka bir proterty e delegate edilebilir.
  * Aşağıdaki örnekte deprecated property i silmeden eski sürümleri de
@@ -93,11 +98,6 @@ class DelegateAnotherProperty {
 
     @Deprecated("Use new name instead", ReplaceWith("privacyPermission"))
     var permission: String by this::privacyPermission
-}
-
-class UserMapDelegate(val map: Map<String, Any?>) {
-    val name: String by map
-    val age: Int by map
 }
 
 /**
@@ -167,9 +167,9 @@ abstract class Lifecycle {
 
 interface LifecycleOwner {
 
-    public val lifecycle: Lifecycle
+    val lifecycle: Lifecycle
 
-    fun isStarted(): Boolean = true
+    fun isViewCreated(): Boolean = true
 }
 
 interface LifecycleObserver {
@@ -216,7 +216,7 @@ fun <T : ViewBinding> BaseSampleFragment.viewBinding(factory: (BaseView) -> T): 
 
         override operator fun getValue(thisRef: BaseSampleFragment, property: KProperty<*>): T {
             binding ?: factory(requireView()).also {
-                if (getLifecycleOwner().isStarted()) {
+                if (getLifecycleOwner().isViewCreated()) {
                     getLifecycleOwner().lifecycle.addObserver(this)
                     binding = it
                 }
