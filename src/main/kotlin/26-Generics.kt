@@ -287,12 +287,6 @@ fun main() {
     println(allElements.sortedWith(compareNames))
 
     /**
-     * Bu eklemenin yapılamamasının sebebi MutableList in invariant olmasıdır.
-     * Invariance sadece aynı tipi kabul eder. Burada MutableList invariant
-     * olmasaydı bir Exception fırlatılması söz konusu olurdur.
-     */
-
-    /**
      * Class = Telephone
      * Types = Telephone, Telephone?
      * Subtypes = Telephone inherit eden herhangi bir şey ya da Telephone un kendisi
@@ -309,6 +303,12 @@ fun main() {
     val telephones = mutableListOf(
         Telephone(), Telephone(), Telephone()
     )
+
+    /**
+     * Bu eklemenin yapılamamasının sebebi MutableList in invariant olmasıdır.
+     * Invariance sadece aynı tipi kabul eder. Burada MutableList invariant
+     * olmasaydı bir Exception fırlatılması söz konusu olurdur.
+     */
     // addComputer(telephones)
 
     println(telephones)
