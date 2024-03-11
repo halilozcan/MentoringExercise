@@ -1,4 +1,4 @@
-
+package coroutineold
 /**
  * Dispatcher'lar coroutine'de yaptığımız işleri Threadlere yönlendirmekten sorumlu yapılardır. Yani Coroutine Scope'u altında
  * bir kod bloğumuz var diyelim. Dispatcher'ın görevi bu kod bloğunun hangi thread'de çalışacağını belirtmek.
