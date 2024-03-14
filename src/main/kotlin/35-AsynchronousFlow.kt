@@ -1,5 +1,6 @@
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.system.measureTimeMillis
 
 /**
  * Bazen internet(network), yerel veritabanı vb. yerlerden veri çekerken veri belirli veya belirsiz zaman aralıklarıyla
@@ -37,6 +38,24 @@ fun main() = runBlocking {
     // commonPitfallWhenUsingContext()
 
     // flowOnOperator()
+
+    // collectWithBuffer()
+
+    // conflateFlow()
+
+    // collectLatest()
+
+    // zipFlow()
+
+    // combineFlow()
+
+    // mapFlow(10)
+
+    // flatMapConcat()
+
+    // flatMapMerge()
+
+    flatMapLatest()
 }
 
 // Listeyi tek seferde çekme işlemi
@@ -276,6 +295,188 @@ fun simpleSleep() = flow {
         emit(i)
     }
 }.flowOn(Dispatchers.Default)
+
+suspend fun collectWithBuffer() = coroutineScope {
+    /**
+     * Buradaki kod parçacığı 100 ms emit için bekler, 300 ms de collection için bekler. Böylece her bir item
+     * yazdırıldığın 400ms geçmiş olur
+     */
+    val time = measureTimeMillis {
+        simpleDelay().collect {
+            delay(2000)
+            println(it)
+        }
+    }
+    println("Collected in $time ms")
+
+    /**
+     * buffer operatörüyle sequential olarak alınması yerine eş zamanlı olarak çalışma sağlanır. Aşağıdaki
+     * kod parçacığın ilk numaranın collect edilmesi için 100ms beklenir ardından her bir item için sadece
+     * 300 ms beklenmiş olur.
+     *
+     * flowOn operatörü de context i değiştirmek zorunda kaldığı zaman aynı buffer mekanizmasını kullanır ancak
+     * burada görüldüğü üzere herhangi açık olara herhangi bir context değişimi bulunmamaktadır.
+     */
+    val bufferTime = measureTimeMillis {
+        simpleDelay().buffer().collect {
+            delay(2000)
+            println(it)
+        }
+    }
+
+    println("Collected with buffer in $bufferTime ms")
+}
+
+fun simpleDelay() = flow {
+    for (i in 1..3) {
+        delay(100)
+        emit(i)
+    }
+}
+
+/**
+ * Flow un gönderdiği değerlerin hepsinin işlenmesi gerekmediği ve en güncel değerlerin alınabilmesinin yeterli
+ * olduğu durumlar olabilir. Bu durumlarda Conflate collector itemları collect etmede yavaş kalındığı zaman
+ * ara değerleri atlamak için kullanılır.
+ */
+suspend fun conflateFlow() = coroutineScope {
+    val time = measureTimeMillis {
+        simpleDelay().conflate().collect {
+            delay(300)
+            println(it)
+        }
+    }
+    println("Collected in $time ms")
+}
+
+/**
+ * Conflation emitter ve collector ın yavaş olduğu durumlarda işlemeyi hızlandırmak için kullanılan yollardan
+ * bir tanesidir. Diğer bir seçenek için yavaş olan collector ı cancel edip her bir veri emit edildiğinde
+ * tekrardan başlatmaktır.
+ */
+suspend fun collectLatest() = coroutineScope {
+    val time = measureTimeMillis {
+        /**
+         * Collect latest 300 ms ve emit edilmesi 100ms sürdüğü için collecting her seferinde yazdırılır ancak
+         * done son elemanda yazdırılır.
+         */
+        simpleDelay().collectLatest {
+            println("Collecting value $it")
+            delay(300)
+            println("Done $it")
+        }
+    }
+    println("Collected in $time ms")
+}
+
+/**
+ * zip karşılıklı gelen itemlarının birlikte emit edilmesini sağlar
+ */
+suspend fun zipFlow() = coroutineScope {
+    val numbers = (1..3).asFlow()
+    val strings = flowOf("one", "two", "three")
+
+    numbers.zip(strings) { number, string ->
+        "$number $string"
+    }.collect {
+        println(it)
+    }
+}
+
+/**
+ * combine edilen flowların birisi emitleme yaptığı zaman collector tarafında diğerinin
+ * en son emit edilen elemanı ve güncel olarak emitlenen değer gelir.
+ *
+ * Örn;
+ * 1 one
+ * 2 one
+ * 2 two
+ * 3 two
+ * 3 three
+ */
+suspend fun combineFlow() = coroutineScope {
+    val numbers = (1..3).asFlow().onEach { delay(300) }
+    val strings = flowOf("one", "two", "three").onEach { delay(400) }
+    val startTime = System.currentTimeMillis()
+
+    numbers.combine(strings) { number, string ->
+        "$number $string"
+    }.collect {
+        println("$it at ${System.currentTimeMillis() - startTime} ms from start")
+    }
+}
+
+/**
+ * Flow asenkron ve sıralı bir şekilde değer alırken aynı zaman da bu alınan değerler için de bir istek atılabilir.
+ * Bu isteğin sonucu da bize bir flow döndürülebilir. Aşağıdaki gibi bir durumda Flow<Flow<String>>> gibi bir flow
+ * yapısı oluşur. Bu flow yapısını tek parça haline getirmek gereklidir.
+ */
+suspend fun mapFlow(a: Int) = coroutineScope {
+    (1..3).asFlow().map {
+        requestFlow(it)
+    }.collect {
+        println(it)
+    }
+}
+
+fun requestFlow(i: Int): Flow<String> = flow {
+    emit("$i: First")
+    delay(500)
+    emit("$i Second")
+}
+
+/**
+ * flatMapConcat ile beraber içerideki flow un bitmesi beklenir ve içerideki flow bittikten sonra yeni
+ * değere geçilir
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun flatMapConcat() = coroutineScope {
+    val startTime = System.currentTimeMillis()
+    (1..3).asFlow()
+        .onEach { delay(100) }
+        .flatMapConcat {
+            requestFlow(it)
+        }.collect {
+            println("$it at ${System.currentTimeMillis() - startTime} ms from start")
+        }
+}
+
+/**
+ * flatMapMerge eş zamanlı olarak gelen flowları collect eder ve değerlerini tek bir flowa birleştirir. Böylece
+ * mümkün olduğunca değerler kısa bir süre içerisinde emit edilmiş olur.
+ */
+suspend fun flatMapMerge() = coroutineScope {
+    val startTime = System.currentTimeMillis()
+    (1..3).asFlow()
+        .onEach { delay(100) }
+        .flatMapMerge { requestFlow(it) }
+        .collect {
+            println("$it at ${System.currentTimeMillis() - startTime} ms from start")
+        }
+
+    // Buradaki kod parçacığı yukarısı ile aynı işlemi yapar
+    /*(1..3).asFlow()
+        .onEach { delay(100) }
+        .map {
+            requestFlow(it)
+        }.flattenMerge()
+        .collect {
+            println("$it at ${System.currentTimeMillis() - startTime} ms from start")
+        }*/
+}
+
+
+suspend fun flatMapLatest() = coroutineScope {
+    val startTime = System.currentTimeMillis()
+    (1..3).asFlow()
+        .onEach { delay(100) }
+        .flatMapLatest {
+            requestFlow(it)
+        }.collect {
+            println("$it at ${System.currentTimeMillis() - startTime} ms from start")
+        }
+}
+
 
 
 
