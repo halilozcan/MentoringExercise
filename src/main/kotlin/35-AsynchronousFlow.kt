@@ -465,7 +465,9 @@ suspend fun flatMapMerge() = coroutineScope {
         }*/
 }
 
-
+/**
+ * flatMapLatest ile upstream flowdan her bir değer emit edildiğinde içerideki flow cancel eder.
+ */
 suspend fun flatMapLatest() = coroutineScope {
     val startTime = System.currentTimeMillis()
     (1..3).asFlow()
