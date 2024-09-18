@@ -44,6 +44,19 @@ open class Pen {
     }
 }
 
+// Parent class default argumente sahip olsa bile override edildiğinde normal argumente çevrilirler.
+open class Parent {
+    open fun sum(a: Int, b: Int = 0): Int {
+        return a + b
+    }
+}
+
+class Child : Parent() {
+    override fun sum(a: Int, b: Int): Int {
+        return super.sum(a, b)
+    }
+}
+
 class Pencil : Pen() {
 
     /**

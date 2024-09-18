@@ -29,19 +29,6 @@ fun sumDefault(a: Int, b: Int = 0): Int {
     return a + b
 }
 
-// Parent class default argumente sahip olsa bile override edildiğinde normal argumente çevrilirler.
-open class Parent {
-    open fun sum(a: Int, b: Int = 0): Int {
-        return a + b
-    }
-}
-
-class Child : Parent() {
-    override fun sum(a: Int, b: Int): Int {
-        return super.sum(a, b)
-    }
-}
-
 /**
  * Eğer bir fonksiyon bir şey döndürmüyorsa onun dönüş tipi Unit olur. Unit için de ekstradan dönüş tipi
  * belirtmeye gerek yoktur. Sadece bir parametre vararg olarak işaretlenebilir. eğer vararg son eleman
@@ -76,10 +63,3 @@ fun login(userName: String, password: String): Boolean {
     validateInput(password)
     return true
 }
-
-
-
-
-
-
-
