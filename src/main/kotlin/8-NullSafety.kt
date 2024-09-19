@@ -76,16 +76,6 @@ fun main() {
      * !! (not-null assertion operator) kullanılabilir. Eğer ifade null ise
      * npe fırlatılır. null değilse programın çalışması devam eder.
      */
-
-    /**
-     *  // Unsafe Cast
-     * // Null nullable olmayan değere çevrilemez
-     *  val x:String = y as String
-     *  val x:String? = y as String?
-     *
-     *  // Safe Cast
-     *  val x:String? = y as? String
-     */
 }
 
 fun getPersonInfo(person: Person?): String? {

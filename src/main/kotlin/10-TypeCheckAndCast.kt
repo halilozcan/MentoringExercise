@@ -38,6 +38,16 @@ delegated property değilse smart cast yapılabilir
 var property -> asla yapılmaz çünkü her zaman değiştirilebilirler.
  */
 
+/**
+ *  // Unsafe Cast
+ * // Null nullable olmayan değere çevrilemez
+ *  val x:String = y as String
+ *  val x:String? = y as String?
+ *
+ *  // Safe Cast
+ *  val x:String? = y as? String
+ */
+
 fun main() {
 
 }
