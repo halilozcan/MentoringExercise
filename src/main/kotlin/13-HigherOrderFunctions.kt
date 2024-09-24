@@ -21,6 +21,26 @@ fun main() {
         println(it)
     }
 
+    doOperation(
+        4,
+        5,
+        { a, b ->
+            a + b
+        })
+    { a, b ->
+        a * b
+    }
+
+    // birden fazla lambda expression varsa named argument ile bu durum çözülebilir
+    doOperation(number1 = 4,
+        number2 = 5,
+        operation1 = { a, b ->
+            a + b
+        },
+        operation2 = { a, b ->
+            a * b
+        })
+
     val message = returnLambda()
 
     println(message())
@@ -43,9 +63,15 @@ fun main() {
      * bu fonksiyon fonksiyon parantezlerini dışına süslü parantezler konularak çağırılabilir
      */
 
-    rollDice(1..6, 3) {
-
-    }
+    rollDice(
+        range = 1..6,
+        time = 3,
+        operationInformer = {
+            println(it)
+        },
+        callback = {
+            println("You rolled:$it")
+        })
 
 }
 
@@ -77,20 +103,22 @@ fun additionAnonymous(addition: ((Int, Int) -> Int)?) {
 }
 
 // Fonksiyon parametrelerini isimlendirebiliriz
-fun rollDice(range: IntRange, time: Int, callback: (result: Int) -> Unit) {
+fun rollDice(range: IntRange, time: Int, operationInformer: (String) -> Unit, callback: (result: Int) -> Unit) {
+    operationInformer.invoke("Operation Started")
     for (i in 0 until time) {
+        operationInformer.invoke("User Rolling Dice")
         val result = range.random()
+        operationInformer.invoke("User Rolled")
         callback(result)
     }
+    operationInformer.invoke("Operation Finished")
 }
 
 fun getZero(): Float = 0.0f
 
 fun getZero(number: Int) = if (number > 0) number.toFloat() else getZero()
-/**
- *
- */
 
-
-
-
+fun doOperation(number1: Int, number2: Int, operation1: (Int, Int) -> Int, operation2: (Int, Int) -> Int) {
+    operation1.invoke(number1, number2)
+    operation2.invoke(number1, number2)
+}

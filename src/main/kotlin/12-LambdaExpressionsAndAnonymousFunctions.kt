@@ -1,4 +1,4 @@
-typealias SumFunction = (Int, Int) -> Int
+
 
 fun main() {
 
@@ -26,6 +26,8 @@ fun main() {
      *
      * A.(B) -> C -> A tipi üzerinden B parametreli fonksiyon çağrımı var ve return tipi
      * C demektir.
+     *
+     * B tipinde parametre alan C tipinde dönüş sağlayan A tipine yazılmış bir extension function
      *
      * (x:Int,y:Int) -> Point
      *
@@ -128,11 +130,9 @@ fun main() {
     }
 
     println(sumOfClosure)
-
-    /**
-     *
-     */
 }
+
+typealias SumFunction = (Int, Int) -> Int
 
 fun typeAliasFunction(action:SumFunction):Int{
     return action.invoke(1,2)
