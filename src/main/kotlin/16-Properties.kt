@@ -2,6 +2,8 @@
  * val ile tanımlama yapıldığı zaman sadece getter ı oluşturulur
  * var ile tanımlama yapıldğı zaman getter ve setter ı oluşturur. kendi içerisinde
  * encapsulation yapılır.
+ * Encapsulation; private bir property nin public bir fonskiyon aracılığıyla erişilmesi veya değiştirilmesine
+ * denir
  */
 
 class Person(val name: String, var lastName: String, val born: Int) {
