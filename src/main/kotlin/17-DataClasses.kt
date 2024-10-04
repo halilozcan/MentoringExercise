@@ -8,7 +8,7 @@
 
 /**
  * Primary constructor ın en az bir parametresi olmalıdır.
- * Bütün primary constructorlar val ya var olarak işaretlenmelidir.
+ * Primary constructor ındaki bütün parametreler ya da var olarak işaretlenmelidir.
  * Data classlar abstract, open, sealed veya inner class olamazlar.
  */
 
@@ -40,6 +40,10 @@ data class Equality(val name: String) {
     var age: Int = 0
 }
 
+class PersonNotData(val name: String) {
+    var age: Int = 0
+}
+
 /**
  * Data classlarda implicit olarak val değerlerini değiştirmek mümkündür.
  * Ancak bu nesnenin kendisini değiştirerek değil kopyasını oluşturarak
@@ -53,4 +57,23 @@ fun main() {
     val newPerson = person.copy(age = 31)
     println(person)
     println(newPerson)
+
+    val equality = Equality("Halil")
+    val anotherEquality = Equality("Halil")
+    anotherEquality.age = 10
+
+    println(equality == anotherEquality)
+
+    val personNotData = PersonNotData("Halil")
+    val anotherPersonNotData = PersonNotData("Halil")
+
+    anotherPersonNotData.age = 10
+
+    println(personNotData == anotherPersonNotData)
+
+    println(personNotData)
+
+    val personData = PersonData("Halil", 30)
+    val (name, age) = personData
+    println("Name:$name age:$age")
 }

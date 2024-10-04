@@ -1,6 +1,6 @@
 /**
  * Bazı nesneleri yapılandırmak, üzerinde işlem yapmak veya
- * ona özel veya kendi başına geçici bir scope oluşturmak scope functions kullanılır.
+ * ona özel veya kendi başına geçici bir scope oluşturmak için scope functions kullanılır.
  */
 
 /**
@@ -16,7 +16,6 @@ var height = 180
 
 fun main() {
 
-    val person: Person? = Person("", "", 1990)
     /**
      * let
      * nesne it olarak adlandırılır. dönüş değeri lambdanın sonucudur.
@@ -40,12 +39,12 @@ fun main() {
 
     numbers.map { it / 2 }.filter { it > 3 }.let(::println)
 
-    val name: String? = "Hello"
-
     /**
      * genellikle null olmayan değerleri kullanmak ve bu amaçla bir kod bloğu
      * oluşturmak için kullanılır.
      */
+    val name: String? = "Hello"
+
     val length = name?.let {
         println(it.length)
         it.length
@@ -88,6 +87,8 @@ fun main() {
      * run aynı anda hem nesneyi initialize etmek hem de bu işlemle bir dönüş
      * değeri hesaplamak için kullanılır.
      */
+
+    val person: Person? = Person("", "", 1990)
 
     getPersonInfoRun(person, 180)
 
@@ -135,6 +136,19 @@ fun main() {
     }.filter {
         it > 3
     }
+
+    val shadowPerson = Person("", "", 0)
+
+    val anotherShadowPerson = Person("", "", 1)
+
+    shadowPerson.apply {
+        height = 183
+        anotherShadowPerson.also {
+            it.height = height
+        }
+    }
+
+    println(anotherShadowPerson.height)
 }
 
 fun getPersonInfoRun(person: Person?, height: Int) {
@@ -159,7 +173,7 @@ fun doSomethingWithPersonLet(person: Person?) {
 
 fun parseNameGloballyLet() {
     if (globalName != null) {
-        // Smart case yapılmaz - globalName.length
+        // Smart cast yapılmaz - globalName.length
     }
 
     globalName?.let {
