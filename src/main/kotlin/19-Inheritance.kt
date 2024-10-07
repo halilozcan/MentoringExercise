@@ -44,19 +44,6 @@ open class Pen {
     }
 }
 
-// Parent class default argumente sahip olsa bile override edildiğinde normal argumente çevrilirler.
-open class Parent {
-    open fun sum(a: Int, b: Int = 0): Int {
-        return a + b
-    }
-}
-
-class Child : Parent() {
-    override fun sum(a: Int, b: Int): Int {
-        return super.sum(a, b)
-    }
-}
-
 class Pencil : Pen() {
 
     /**
@@ -91,6 +78,21 @@ open class BallPointPen : Pen() {
     // üst sınıftaki değer alınmak isteniyorsa
     // override val brand: Int  get() = super.brand
 }
+
+// Parent class default argumente sahip olsa bile override edildiğinde normal argumente çevrilirler.
+open class Parent {
+    open fun sum(a: Int, b: Int = 0): Int {
+        return a + b
+    }
+}
+
+class Child : Parent() {
+    override fun sum(a: Int, b: Int): Int {
+        return super.sum(a, b)
+    }
+}
+
+
 
 /**
  * Initialize işleminde ilk önce derived classın base class a parametre

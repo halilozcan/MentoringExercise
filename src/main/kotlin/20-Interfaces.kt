@@ -109,7 +109,7 @@ fun main() {
 
 /**
  * Uygulamalarda test yazarken genellikle fake, mock ve stub kavramları
- * karşımıza çıkar. Interface programming fake oluştururken senaryoların
+ * karşımıza çıkar. Interfaceler fake oluştururken senaryoların
  * takip edileceği şekilde test yazılmak üzerine kurgulanır.
  */
 interface Source {
