@@ -148,6 +148,23 @@ interface Creator {
  * initialize edilirler.
  */
 
+/**
+ * Abstract classlar interfacelerin bütün implementasyonlarının override edilmesini
+ * işlemini kendilerine alarak kod fazlalığını engeller
+ */
+
+interface AnimationListener {
+    fun onStart()
+    fun onResume()
+    fun onDestroy()
+}
+
+abstract class AnimationContract : AnimationListener {
+    override fun onStart() {}
+    override fun onResume() {}
+    override fun onDestroy() {}
+}
+
 fun main() {
     println(sum)
 
@@ -200,4 +217,10 @@ fun main() {
     MyFragment.newInstance()
     // Companion object e isim verilse bile erişirken kullanılmasına gerek yoktur
     MyFragment.CompanionInstanceCreator.newInstance()
+
+    val animationContract = object : AnimationContract() {
+        override fun onStart() {
+            super.onStart()
+        }
+    }
 }

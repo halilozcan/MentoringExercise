@@ -27,7 +27,7 @@
  */
 abstract class AbstractClass
 
-abstract class Employee(val name: String, val experience: Int, open val dateOfBirth: Int) {
+abstract class Employee(val name: String, open val experience: Int) {
 
 
     abstract var salary: Double
@@ -41,8 +41,8 @@ abstract class Employee(val name: String, val experience: Int, open val dateOfBi
     }
 }
 
-class SoftwareEngineer(name: String, experience: Int, override val dateOfBirth: Int) :
-    Employee(name, experience, dateOfBirth) {
+class SoftwareEngineer(name: String, experience: Int, private val dateOfBirth: Int) :
+    Employee(name, experience) {
     override var salary: Double = 50000.00
 
 
@@ -50,23 +50,6 @@ class SoftwareEngineer(name: String, experience: Int, override val dateOfBirth: 
         return "Birth date is:$dateOfBirth"
     }
 
-}
-
-/**
- * Abstract classlar interfacelerin bütün implementasyonlarının override edilmesini
- * işlemini kendilerine alarak kod fazlalığını engeller
- */
-
-interface AnimationListener {
-    fun onStart()
-    fun onResume()
-    fun onDestroy()
-}
-
-abstract class AnimationContract : AnimationListener {
-    override fun onStart() {}
-    override fun onResume() {}
-    override fun onDestroy() {}
 }
 
 /**
@@ -158,11 +141,7 @@ fun main() {
     val softwareEngineer = SoftwareEngineer("Halil", 6, 1994)
     softwareEngineer.printDetails()
 
-    val animationContract = object : AnimationContract() {
-        override fun onStart() {
-            super.onStart()
-        }
-    }
+
 
     val circle: Shape = Circle()
     circle.updateColor(2)
