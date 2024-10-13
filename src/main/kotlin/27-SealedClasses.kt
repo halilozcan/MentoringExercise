@@ -3,10 +3,27 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
 /**
- * Durum tiplerini belirtmek için kullanılır. Android tarafında Response un state ini
- * belirtmek için kullanılır. Enumlar dan en büyük farkı her bir state in kendisine
+ * Durum tiplerini belirtmek için kullanılır. Android tarafında en önemli kullanımından birisi Response un state ini
+ * belirtmektir. Enumlar dan en büyük farkı her bir state in kendisine
  * ait bir veri tutabilmesidir.
  */
+
+sealed class UserClickAction {
+    data class JustIdContentClick(val id: String) : UserClickAction()
+    data class MediaContentClick(val id: String, val imageUrl: String, val mediaContentId: String) : UserClickAction()
+}
+
+fun handleUserClickAction(userClickAction: UserClickAction) {
+    when (userClickAction) {
+        is UserClickAction.JustIdContentClick -> {
+            println("Just Id:" + userClickAction.id)
+        }
+
+        is UserClickAction.MediaContentClick -> {
+            println("Media:" + userClickAction.imageUrl)
+        }
+    }
+}
 
 sealed class Response<T> {
     data class Success<T>(val data: T) : Response<T>()
@@ -21,6 +38,9 @@ sealed class Response<T> {
 data class ResultDto(val data: String)
 
 fun main() = runBlocking {
+    val userAction = UserClickAction.JustIdContentClick("12")
+    // handleUserClickAction(userAction)
+
     println("Error will not be thrown")
 
     delay(2000)

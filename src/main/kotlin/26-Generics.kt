@@ -82,7 +82,7 @@ class InvarianceGenericClass<T : A> {
 }
 
 /**
- * Covariance; super type yerine subtype kullanılması
+ * Covariance; super type yerine subtype kullanılabilmesi
  * Sadece out position da kullanılabilir yani fonksiyonun return type ı olarak
  * kullanılabilir.
  * val property olarak kullanılabilir, var property olarak kullanılmaz.
@@ -92,7 +92,7 @@ class CovarianceGenericClass<out T : A> {
 }
 
 /**
- * Contravariance; subtype yerine supertype ın kullanılması
+ * Contravariance; subtype yerine supertype ın kullanılabilmesi
  * Sadece in position da yani parametre olarak kullanılabilir
  * out position olarak kullanılamaz yani val ya da var propery olarak kullanılmaz
  */
@@ -117,12 +117,14 @@ class ContravarianceGenericClass<in T : A> {
 /**
  * Burada kitty isminden de anlaşılacağı üzere hem bir classtır hem de bir tipin ismidir.
  */
-data class Kitty(val kittyName: String, val isTwoFingered: Boolean) : Mammal(kittyName) {/*fun eat() {}
+data class Kitty(val kittyName: String, val isTwoFingered: Boolean) : Mammal(kittyName) {
+    /*fun eat() {}
 
     fun sleep() {}*/
 }
 
-data class Lion(val lionName: String) : Mammal(lionName) {/*fun eat() {}
+data class Lion(val lionName: String) : Mammal(lionName) {
+    /*fun eat() {}
 
     fun sleep() {}*/
 }
@@ -230,6 +232,12 @@ fun main() {
     log('c')
     log(10.0f)
 
+    val subType = createSubType()
+    val superType = subType as SuperType
+
+    val dog = superType.match(British())
+    val cavalier = subType.match(British())
+
     /**
      * B a nın alt tipidir. Bundan dolay B de anın alt tipi olduğu için üretilebilir
      */
@@ -307,7 +315,7 @@ fun main() {
     /**
      * Bu eklemenin yapılamamasının sebebi MutableList in invariant olmasıdır.
      * Invariance sadece aynı tipi kabul eder. Burada MutableList invariant
-     * olmasaydı bir Exception fırlatılması söz konusu olurdur.
+     * olmasaydı bir Exception fırlatılması söz konusu olurdu.
      */
     // addComputer(telephones)
 
@@ -332,10 +340,4 @@ fun main() {
      * Compile hatası verir. Çünkü Computer ve Telephone arasında bir typing yoktur
      */
     // copyData(computers, telephones)
-
-    val subType = createSubType()
-    val superType = subType as SuperType
-
-    val dog = superType.match(British())
-    val cavalier = subType.match(British())
 }
