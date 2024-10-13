@@ -1,11 +1,4 @@
 /**
- * Bazen bir sınıfı üretmek istediğimizde o sınıfa ait küçük
- * bir değişiklik yaparak kullanmak isteriz. Bu tür durumlarda sınıfı
- * üretmek ve kullanmamıza yarayan yapılar object expressionslar ve object
- * declarationslardır.
- */
-
-/**
  * Object expressionslar anonymous sınıfların nesnelerini üretir. Aynı
  * zamanda class declaration ı olmadan sınıf tanımlamamızı sağlar. Bu
  * sınıflar sadece tek kullanımlık sınıflar olarak geçer. Anonymous
@@ -124,16 +117,22 @@ class MyFragment {
         fun newInstance() = MyFragment()
     }
 
+    /**
+     * Bir sınıfın içerisinde ancak 1 tane companion object bulunabilir
+     */
     companion object CompanionInstanceCreator {
         @JvmStatic
         fun newInstance() = MyFragment()
     }
 
-    /*companion object : Creator {
+    /***
+     * Companion objectler interface implemente edebilirler
+    companion object AnotherInstanceCreateCompanionObject : Creator {
         override fun createInstance(): MyFragment {
             return MyFragment()
         }
-    }*/
+    }
+     */
 }
 
 interface Creator {

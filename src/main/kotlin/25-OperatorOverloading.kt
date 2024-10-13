@@ -28,6 +28,16 @@
  * x1 %= x2	        x1.remAssign(x2)
  */
 
+operator fun String.minus(char: Char): String {
+    return dropLastWhile {
+        it != char
+    }
+}
+
+operator fun String.unaryMinus(): String {
+    return this.reversed()
+}
+
 data class Point(val x: Int, val y: Int) {
     operator fun invoke() = "X:$x Y:$y"
 }
@@ -54,6 +64,10 @@ fun shape(init: ShapeOperator.() -> Unit): ShapeOperator {
 }
 
 fun main() {
+    println("Hello" - 'e')
+
+    println(-"Hello")
+
     val point = Point(1, 2)
     val other = Point(2, 3)
 
@@ -67,18 +81,4 @@ fun main() {
         +Point(0, 1)
         +Point(1, 3)
     }
-
-    println("Hello" - 'e')
-
-    println(-"Hello")
-}
-
-operator fun String.minus(char: Char): String {
-    return dropLastWhile {
-        it != char
-    }
-}
-
-operator fun String.unaryMinus(): String {
-    return this.reversed()
 }
